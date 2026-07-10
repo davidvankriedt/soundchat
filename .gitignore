@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+output.wav
 
 # Virtual environments
 .venv

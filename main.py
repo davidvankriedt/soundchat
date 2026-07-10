@@ -24,6 +24,12 @@ def print_options():
 
     """)
 
+def audio_to_text(recording):
+    write('output.wav', fs, recording) # convert numpy array into wav
+
+    return decode_from_file('output.wav')
+
+
 def chat():
     while True:
         try:
@@ -37,31 +43,43 @@ def chat():
             return 0
         
 def search_nearby():
+    client_audio = morse_to_audio(encode("POLO"))
 
-    # for testing purposes, a device has been found
-    device_found = True
+    # run a loop where client listens for MARCO for 10 seconds, and then plays POLO
 
-    if (device_found):
-        print("Device found. Starting chat...")
-        chat()
+    while True:
+        rec = sd.rec(int(rec_duration * fs))
+        sd.wait()
+
+        host_res = audio_to_text(rec)
+
+        if host_res == "MARCO":
+            print("Host found! Responding...")
+
+            while True:
+                play_audio(client_audio)
+
+                rec = sd.rec(int(rec_duration * fs))
+                sd.wait()
+
+                host_res = audio_to_text(rec)
+
+        
     else:
         print("Device not found.")
 
 
 def host_connection():
-    host_morse = encode("MARCO")
-    host_audio = morse_to_audio(host_morse)
+    host_audio = morse_to_audio(encode("MARCO"))
     
     # run a loop where MARCO is played, and then listen for POLO for 10 seconds
-    while (True):
+    while True:
         play_audio(host_audio)
 
         rec = sd.rec(int(rec_duration * fs))
         sd.wait()
 
-        write('output.wav', fs, rec) # convert numpy array into wav
-
-        text = decode_from_file('output.wav')
+        text = audio_to_text(rec)
 
         if text == "POLO":
             print("Device found!")
