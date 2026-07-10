@@ -28,7 +28,8 @@ def audio_to_text(recording):
     write('output.wav', fs, recording) # convert numpy array into wav
 
     try:
-        return decode_from_file('output.wav')
+        text = decode_from_file('output.wav')
+        return text.strip()
     except Exception:
         return ''
 
@@ -91,32 +92,6 @@ def host_connection():
         if client_res == "POLO":
             print("Device found!")
 
-
-def test():
-    while True:
-        print("Recording in 3 seconds...")
-
-        time.sleep(3)
-
-        rec = sd.rec(int(rec_duration * fs))
-        sd.wait()
-
-        print("playing audio:")
-
-        time.sleep(1)
-
-        sd.play(rec)
-
-        time.sleep(1)
-
-def morse_test():
-    while True:
-        audio = morse_to_audio(encode("hey"))
-        play_audio(audio)
-        
-        time.sleep(2)
-
-
 def main():
 
     while True:
@@ -136,10 +111,6 @@ def main():
             case 'q':
                 print("\nTurning off...")
                 return 0
-            case 't':
-                test()
-            case 'm':
-                morse_test()
             case _:
                 print("Unknown command. Enter 'o' to display available commands.")
                 continue
