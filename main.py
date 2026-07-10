@@ -9,9 +9,9 @@ import sounddevice as sd
 import time
 
 fs = 44100 # audio sample rate
-rec_duration = 10 # audio recording duration in seconds
+rec_duration = 5 # audio recording duration in seconds
 sd.default.samplerate = fs
-sd.default.channels = 2
+sd.default.channels = 1
 
 def print_options():
     print("""
@@ -56,7 +56,7 @@ def search_nearby():
 
         host_res = audio_to_text(rec)
 
-        print(f'Found text: {text}')
+        print(f'Found text: {host_res}')
 
         if host_res == "MARCO":
             print("Host found! Responding...")
@@ -84,12 +84,38 @@ def host_connection():
         rec = sd.rec(int(rec_duration * fs))
         sd.wait()
 
-        text = audio_to_text(rec)
+        client_res = audio_to_text(rec)
 
-        print(f'Found text: {text}') # debug
+        print(f'Found text: {client_res}')
 
-        if text == "POLO":
+        if client_res == "POLO":
             print("Device found!")
+
+
+def test():
+    while True:
+        print("Recording in 3 seconds...")
+
+        time.sleep(3)
+
+        rec = sd.rec(int(rec_duration * fs))
+        sd.wait()
+
+        print("playing audio:")
+
+        time.sleep(1)
+
+        sd.play(rec)
+
+        time.sleep(1)
+
+def morse_test():
+    while True:
+        audio = morse_to_audio(encode("hey"))
+        play_audio(audio)
+        
+        time.sleep(2)
+
 
 def main():
 
@@ -110,6 +136,10 @@ def main():
             case 'q':
                 print("\nTurning off...")
                 return 0
+            case 't':
+                test()
+            case 'm':
+                morse_test()
             case _:
                 print("Unknown command. Enter 'o' to display available commands.")
                 continue
