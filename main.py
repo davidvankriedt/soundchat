@@ -27,7 +27,10 @@ def print_options():
 def audio_to_text(recording):
     write('output.wav', fs, recording) # convert numpy array into wav
 
-    return decode_from_file('output.wav')
+    try:
+        return decode_from_file('output.wav')
+    except Exception:
+        return ''
 
 
 def chat():
@@ -52,6 +55,8 @@ def search_nearby():
         sd.wait()
 
         host_res = audio_to_text(rec)
+
+        print(f'Found text: {text}')
 
         if host_res == "MARCO":
             print("Host found! Responding...")
@@ -80,6 +85,8 @@ def host_connection():
         sd.wait()
 
         text = audio_to_text(rec)
+
+        print(f'Found text: {text}') # debug
 
         if text == "POLO":
             print("Device found!")
