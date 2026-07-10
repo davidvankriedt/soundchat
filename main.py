@@ -3,13 +3,21 @@
 from pymorsed import encode
 from pymorsed.audio_decoder import decode_from_file
 from pymorsed.audio_encoder import morse_to_audio, play_audio
+from scipy.io.wavfile import write
+import sounddevice as sd
 
 import time
+
+fs = 44100 # audio sample rate
+rec_duration = 10 # audio recording duration in seconds
+sd.default.samplerate = fs
+sd.default.channels = 2
 
 def print_options():
     print("""
     -------- SOUND CHAT MANUAL -------    
 
+        h --- Host a new connection
         c --- Search for nearby connection
         o --- Display options
         q --- Quit app
@@ -40,6 +48,24 @@ def search_nearby():
         print("Device not found.")
 
 
+def host_connection():
+    host_morse = encode("MARCO")
+    host_audio = morse_to_audio(host_morse)
+    
+    # run a loop where MARCO is played, and then listen for POLO for 10 seconds
+    while (True):
+        play_audio(host_audio)
+
+        rec = sd.rec(int(rec_duration * fs))
+        sd.wait()
+
+        write('output.wav', fs, rec) # convert numpy array into wav
+
+        text = decode_from_file('output.wav')
+
+        if text == "POLO":
+            print("Device found!")
+
 def main():
 
     while True:
@@ -47,6 +73,9 @@ def main():
 
         # available commands    
         match command:
+            case 'h':
+                "Starting new connection..."
+                host_connection()
             case 'c':
                 "Searching for nearby devices..."
                 search_nearby()
