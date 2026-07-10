@@ -9,9 +9,9 @@ import sounddevice as sd
 import time
 
 fs = 44100 # audio sample rate
-rec_duration = 10 # audio recording duration in seconds
+rec_duration = 5 # audio recording duration in seconds
 sd.default.samplerate = fs
-sd.default.channels = 2
+sd.default.channels = 1
 
 def print_options():
     print("""
@@ -56,7 +56,7 @@ def search_nearby():
 
         host_res = audio_to_text(rec)
 
-        print(f'Found text: {text}')
+        print(f'Found text: {host_res}')
 
         if host_res == "MARCO":
             print("Host found! Responding...")
